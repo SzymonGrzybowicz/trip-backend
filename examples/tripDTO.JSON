@@ -1,0 +1,19 @@
+{
+  "id": 0,
+  "date": "2019-01-01T07:19:00",
+  "distance": 215,
+  "localizations": [
+    {
+      "googleId": "Eh5QacWCc3Vkc2tpZWdvLCDFgcOzZMW6LCBQb2xza2EiLiosChQKEglB3S32SssbRxHIvN7E_XRrehIUChIJr1ZFdSTLG0cRrNshm2OufMs",
+      "main_description": "jakis_place",
+      "secondary_description": "jakis secondary",
+      "number_in_trip": 0
+    },
+    {
+      "googleId": "ChIJiSlyzfu3FkcRj6p2Qc_xGqI",
+      "main_description": "finish_place",
+      "secondary_description": "secondary_place",
+      "number_in_trip": 1
+    }
+  ]
+}

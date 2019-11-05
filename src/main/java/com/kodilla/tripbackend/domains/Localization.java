@@ -2,6 +2,7 @@ package com.kodilla.tripbackend.domains;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @JsonIgnoreProperties
 @Getter
 @Table(name = "LOCALIZATIONS")
+@NoArgsConstructor
 public class Localization {
 
     public Localization(String mainDescription, String secondaryDescription, double longitude, double latitude, int numberInTrip, String googleId) {

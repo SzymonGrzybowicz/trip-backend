@@ -3,7 +3,6 @@ package com.kodilla.tripbackend.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,10 +25,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     MyUserDetailsService myUserDetailsService;
 
     @Autowired
-    FailureHandler failureHandler;
+    LoginFailureHandler loginFailureHandler;
 
     @Autowired
-    SuccessHandler successHandler;
+    LoginSuccessHandler loginSuccessHandler;
+
+    @Autowired
+    LogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -54,15 +57,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests().antMatchers("/user/registration", "/login").permitAll()
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.POST, "/login").permitAll()
-                .and()
                 .csrf().disable()
                 .formLogin()
                 .loginProcessingUrl("/login").usernameParameter("username").passwordParameter("password")
-                .failureHandler(failureHandler)
-                .successHandler(successHandler)
+                .failureHandler(loginFailureHandler)
+                .successHandler(loginSuccessHandler)
                 .and()
-                .logout();
+                .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessHandler(logoutSuccessHandler);
     }
 
     @Bean
@@ -74,14 +77,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/login").allowedOrigins("*");
-//            }
-//        };
-//    }
 }

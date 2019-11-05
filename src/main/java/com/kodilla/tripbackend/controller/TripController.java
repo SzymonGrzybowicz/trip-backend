@@ -21,7 +21,7 @@ public class TripController {
     @Autowired
     TripMapper mapper;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<TripDto> getAllTrips() {
         return mapper.mapToDtoList(service.getAllTrips());
     }

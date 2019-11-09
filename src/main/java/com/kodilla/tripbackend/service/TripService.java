@@ -1,18 +1,19 @@
 package com.kodilla.tripbackend.service;
 
-import com.kodilla.tripbackend.domains.Localization;
-import com.kodilla.tripbackend.domains.Trip;
-import com.kodilla.tripbackend.domains.TripDto;
-import com.kodilla.tripbackend.domains.User;
+import com.kodilla.tripbackend.domains.*;
 import com.kodilla.tripbackend.mapper.LocalizationMapper;
 import com.kodilla.tripbackend.repositories.LocalizationRepository;
 import com.kodilla.tripbackend.repositories.TripRepository;
 import com.kodilla.tripbackend.repositories.UserRepository;
+import com.kodilla.tripbackend.repositories.WeatherForecastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class TripService {
@@ -29,8 +30,16 @@ public class TripService {
     @Autowired
     LocalizationRepository localizationRepository;
 
+    @Autowired
+    WeatherService weatherService;
+
+    @Autowired
+    WeatherForecastRepository weatherRepository;
+
     public List<Trip> getAllTrips() {
-        return tripRepository.findAll();
+        return tripRepository.findAll().stream()
+                .map(t -> checkWeatherIsActualAndUpdate(t))
+                .collect(Collectors.toList());
     }
 
     public boolean saveTrip(String username, Trip trip) {
@@ -39,7 +48,7 @@ public class TripService {
             User user = optionalUser.get();
             user.getCreatedTrips().add(trip);
             trip.setCreator(user);
-            for (Localization localization: trip.getLocalizations()) {
+            for (Localization localization : trip.getLocalizations()) {
                 localization.setTrip(trip);
             }
             tripRepository.save(trip);
@@ -50,9 +59,9 @@ public class TripService {
 
     public boolean deleteTrip(Long id) {
         Optional<Trip> optionalTrip = tripRepository.findById(id);
-        if (optionalTrip.isPresent()){
+        if (optionalTrip.isPresent()) {
             Trip trip = optionalTrip.get();
-            for (Localization localization: trip.getLocalizations()){
+            for (Localization localization : trip.getLocalizations()) {
                 localizationRepository.delete(localization);
             }
             tripRepository.delete(trip);
@@ -71,4 +80,28 @@ public class TripService {
         tripRepository.save(trip);
         return true;
     }
+
+    private Trip checkWeatherIsActualAndUpdate(Trip trip) {
+        final WeatherForecast[] forecast = {trip.getWeatherForecast()};
+        if (trip.getDate().getTime() < System.currentTimeMillis() || trip.getDate().getTime() - System.currentTimeMillis() > TimeUnit.DAYS.toMillis(7)) {
+            return trip;
+        }
+
+        final WeatherForecast[] resultForecast = new WeatherForecast[1];
+        if (forecast[0] == null || System.currentTimeMillis() - forecast[0].getLastCheckDate().getTime() > TimeUnit.DAYS.toDays(1)) {
+            if (forecast[0] != null) weatherRepository.delete(forecast[0]);
+            for (Localization localization : trip.getLocalizations()) {
+                if (localization.getNumberInTrip() == 0) {
+                    resultForecast[0] = weatherService.getForecastForDate(
+                            trip.getDate(),
+                            localization.getLatitude(),
+                            localization.getLongitude());
+                }
+            }
+        }
+        trip.setWeatherForecast(resultForecast[0]);
+        tripRepository.save(trip);
+        return trip;
+    }
+
 }

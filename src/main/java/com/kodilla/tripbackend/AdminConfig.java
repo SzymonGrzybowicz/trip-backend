@@ -10,4 +10,7 @@ public class AdminConfig {
 
     @Value("${google.api.key}")
     private String googleApiKey;
+
+    @Value("${weather.api.key}")
+    private String weatherApiKey;
 }

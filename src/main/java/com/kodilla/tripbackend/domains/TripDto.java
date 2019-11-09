@@ -8,7 +8,6 @@ import lombok.Getter;
 
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 @AllArgsConstructor
 @Getter
@@ -26,4 +25,7 @@ public class TripDto {
 
     @JsonProperty("distance")
     private double distance;
+
+    @JsonProperty("temperature")
+    private Integer temperature;
 }

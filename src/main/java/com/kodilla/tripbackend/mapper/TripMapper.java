@@ -16,11 +16,20 @@ public class TripMapper {
 
     public List<TripDto> mapToDtoList(List<Trip> trips) {
         return trips.stream()
-                .map(t -> new TripDto(t.getId(), localizationMapper.mapToDtoList(t.getLocalizations()), t.getDate(), t.getDistance()))
+                .map(t ->
+                        new TripDto(
+                        t.getId(),
+                        localizationMapper.mapToDtoList(t.getLocalizations()),
+                        t.getDate(),
+                        t.getDistance(),
+                        t.getWeatherForecast() == null ? null : (int)Math.round(t.getWeatherForecast().getTemperature())))
                 .collect(Collectors.toList());
     }
 
     public Trip mapToTrip(TripDto tripDto) {
-        return new Trip(tripDto.getDate(), tripDto.getDistance(), localizationMapper.mapToLocalisationList(tripDto.getLocalizations()));
+        return new Trip(
+                tripDto.getDate(),
+                tripDto.getDistance(),
+                localizationMapper.mapToLocalisationList(tripDto.getLocalizations()));
     }
 }

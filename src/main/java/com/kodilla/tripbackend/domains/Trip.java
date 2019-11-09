@@ -50,6 +50,10 @@ public class Trip {
     @Setter
     private User creator;
 
+    @Setter
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    WeatherForecast weatherForecast;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

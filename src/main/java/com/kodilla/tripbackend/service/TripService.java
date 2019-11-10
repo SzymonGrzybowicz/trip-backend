@@ -9,6 +9,7 @@ import com.kodilla.tripbackend.repositories.WeatherForecastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,22 @@ public class TripService {
         return tripRepository.findAll().stream()
                 .map(t -> checkWeatherIsActualAndUpdate(t))
                 .collect(Collectors.toList());
+    }
+
+    public List<Trip> getTripsCreatedByUser(String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (!optionalUser.isPresent()){
+            return new ArrayList<>();
+        }
+        return tripRepository.findByCreator(optionalUser.get());
+    }
+
+    public List<Trip> getTripsUserJoined(String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (!optionalUser.isPresent()){
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(); //TODO
     }
 
     public boolean saveTrip(String username, Trip trip) {
@@ -103,5 +120,4 @@ public class TripService {
         tripRepository.save(trip);
         return trip;
     }
-
 }

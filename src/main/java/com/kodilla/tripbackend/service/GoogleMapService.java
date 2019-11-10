@@ -2,6 +2,7 @@ package com.kodilla.tripbackend.service;
 
 import com.kodilla.tripbackend.AdminConfig;
 import com.kodilla.tripbackend.domains.LocalizationDTO;
+import com.kodilla.tripbackend.google_maps_json.distanceMatrix.DistanceResponse;
 import com.kodilla.tripbackend.google_maps_json.geolocation.Geometry;
 import com.kodilla.tripbackend.google_maps_json.geolocation.Location;
 import com.kodilla.tripbackend.google_maps_json.geolocation.Response;
@@ -51,5 +52,18 @@ public class GoogleMapService {
         Response response = restTemplate.getForObject(uri, Response.class);
 
         return response.getResults().get(0).getGeometry().getLocation();
+    }
+
+    public String getDistance(String firstPlaceId, String secondPlaceId) {
+        URI uri = UriComponentsBuilder.fromHttpUrl("https://maps.googleapis.com/maps/api/distancematrix/json?")
+                .queryParam("units", "si")
+                .queryParam("origins", "place_id:" + firstPlaceId)
+                .queryParam("destinations", "place_id:" + secondPlaceId)
+                .queryParam("key", adminConfig.getGoogleApiKey()).build().encode().toUri();
+        DistanceResponse response = restTemplate.getForObject(uri, DistanceResponse.class);
+        if (response.getRows().size() > 0 && response.getRows().get(0).getElements().size()> 0) {
+            return response.getRows().get(0).getElements().get(0).getDistance().getDistanceInKm();
+        }
+        return "";
     }
 }

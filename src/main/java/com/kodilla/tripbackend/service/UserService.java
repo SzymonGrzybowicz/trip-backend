@@ -34,13 +34,15 @@ public class UserService {
         return true;
     }
 
-    public boolean joinUserToTrip(long userId, long tripId) {
+    public boolean joinUserToTrip(String username, long tripId) {
         Optional<Trip> optionalTrip = tripRepository.findById(tripId);
-        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalTrip.isPresent() && optionalUser.isPresent()){
             Trip trip = optionalTrip.get();
             User user = optionalUser.get();
             if (user.getTrips().contains(trip)){
+                return false;
+            } if (trip.getCreator().equals(user)) {
                 return false;
             }
             user.getTrips().add(trip);
@@ -50,9 +52,9 @@ public class UserService {
         return false;
     }
 
-    public boolean detachUserFromTrip(long userId, long tripId) {
+    public boolean detachUserFromTrip(String username, long tripId) {
         Optional<Trip> optionalTrip = tripRepository.findById(tripId);
-        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalTrip.isPresent() && optionalUser.isPresent()){
             Trip trip = optionalTrip.get();
             User user = optionalUser.get();

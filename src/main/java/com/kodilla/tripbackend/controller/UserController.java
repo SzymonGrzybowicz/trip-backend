@@ -4,6 +4,8 @@ import com.kodilla.tripbackend.domains.UserDto;
 import com.kodilla.tripbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,16 +25,30 @@ public class UserController {
            }
     }
 
-    @RequestMapping(value = "/join/{userId}/{tripId}", method = RequestMethod.PATCH)
-    public void joinUserToTrip(@PathVariable long userId, @PathVariable long tripId, HttpServletResponse response) {
-        if (!userService.joinUserToTrip(userId, tripId)){
+    @RequestMapping(value = "/join/{tripId}", method = RequestMethod.PUT)
+    public void joinUserToTrip(@PathVariable long tripId, HttpServletResponse response) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        if (!userService.joinUserToTrip(username, tripId)){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
-    @RequestMapping(value = "/detach/{userId}/{tripId}", method = RequestMethod.PATCH)
-    public void detachUserFromTrip(@PathVariable long userId, @PathVariable long tripId, HttpServletResponse response) {
-        if (!userService.detachUserFromTrip(userId, tripId)){
+    @RequestMapping(value = "/detach/{tripId}", method = RequestMethod.PUT)
+    public void detachUserFromTrip(@PathVariable long tripId, HttpServletResponse response) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        if (!userService.detachUserFromTrip(username, tripId)){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }

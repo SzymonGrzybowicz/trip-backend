@@ -45,7 +45,7 @@ public class Trip {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "trips")
     private List<User> usersSignedUp;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "CREATOR_USER_ID")
     @Setter
     private User creator;

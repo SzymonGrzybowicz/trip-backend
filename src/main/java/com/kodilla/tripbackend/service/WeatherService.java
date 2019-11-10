@@ -28,7 +28,6 @@ public class WeatherService {
         List<Forecast> forecasts = getTemperatureForecast(latitude, longitude);
         for (Forecast forecast: forecasts) {
             Date forecastDate = new Date(forecast.getTime() * 1000);
-            System.out.println(forecastDate);
             Calendar cal1 = Calendar.getInstance();
             Calendar cal2 = Calendar.getInstance();
             cal1.setTime(forecastDate);

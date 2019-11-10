@@ -20,7 +20,7 @@ public class TripDto {
     private List<LocalizationDTO> localizations;
 
     @JsonProperty("date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date date;
 
     @JsonProperty("distance")

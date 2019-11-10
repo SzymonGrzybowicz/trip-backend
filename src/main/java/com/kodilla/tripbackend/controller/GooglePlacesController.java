@@ -20,4 +20,9 @@ public class GooglePlacesController {
         return service.getSuggestions(input);
     }
 
+    @RequestMapping(value = "/distance/{firstPlaceId}/{secondPlaceId}", method = RequestMethod.GET)
+    public String getDistance(@PathVariable String firstPlaceId, @PathVariable String secondPlaceId) {
+        return service.getDistance(firstPlaceId, secondPlaceId);
+    }
+
 }

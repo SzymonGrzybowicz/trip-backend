@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LocalizationDTO {
+public class LocalizationDto {
 
     @JsonProperty(value = "google_id")
     private String googleId;

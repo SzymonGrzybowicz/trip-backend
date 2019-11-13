@@ -17,7 +17,7 @@ public class TripDto {
     private Long id;
 
     @JsonProperty("localizations")
-    private List<LocalizationDTO> localizations;
+    private List<LocalizationDto> localizations;
 
     @JsonProperty("date")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

@@ -1,12 +1,10 @@
 package com.kodilla.tripbackend.service;
 
 import com.kodilla.tripbackend.AdminConfig;
-import com.kodilla.tripbackend.domains.LocalizationDTO;
+import com.kodilla.tripbackend.domains.LocalizationDto;
 import com.kodilla.tripbackend.google_maps_json.distanceMatrix.DistanceResponse;
-import com.kodilla.tripbackend.google_maps_json.geolocation.Geometry;
 import com.kodilla.tripbackend.google_maps_json.geolocation.Location;
 import com.kodilla.tripbackend.google_maps_json.geolocation.Response;
-import com.kodilla.tripbackend.google_maps_json.geolocation.Result;
 import com.kodilla.tripbackend.google_maps_json.places.Prediction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +24,7 @@ public class GoogleMapService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<LocalizationDTO> getSuggestions(String input) {
+    public List<LocalizationDto> getSuggestions(String input) {
         URI uri = UriComponentsBuilder.fromHttpUrl("https://maps.googleapis.com/maps/api/place/autocomplete/json?")
                 .queryParam("input", input)
                 .queryParam("key", adminConfig.getGoogleApiKey()).build().encode().toUri();
@@ -37,7 +35,7 @@ public class GoogleMapService {
 
         return prediction.getPlaces().stream()
                 .limit(5)
-                .map(e -> new LocalizationDTO(e.getPlaceId(),
+                .map(e -> new LocalizationDto(e.getPlaceId(),
                         e.getStructuredFormatting().getMainText(),
                         e.getStructuredFormatting().getSecondaryText(),
                         0))

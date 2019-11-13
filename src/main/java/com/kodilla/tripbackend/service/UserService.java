@@ -6,6 +6,8 @@ import com.kodilla.tripbackend.domains.UserDto;
 import com.kodilla.tripbackend.repositories.TripRepository;
 import com.kodilla.tripbackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -34,9 +36,9 @@ public class UserService {
         return true;
     }
 
-    public boolean joinUserToTrip(String username, long tripId) {
+    public boolean joinUserToTrip(long tripId) {
         Optional<Trip> optionalTrip = tripRepository.findById(tripId);
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+        Optional<User> optionalUser = getCurrentUser();
         if (optionalTrip.isPresent() && optionalUser.isPresent()){
             Trip trip = optionalTrip.get();
             User user = optionalUser.get();
@@ -52,9 +54,9 @@ public class UserService {
         return false;
     }
 
-    public boolean detachUserFromTrip(String username, long tripId) {
+    public boolean detachUserFromTrip(long tripId) {
         Optional<Trip> optionalTrip = tripRepository.findById(tripId);
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+        Optional<User> optionalUser = getCurrentUser();
         if (optionalTrip.isPresent() && optionalUser.isPresent()){
             Trip trip = optionalTrip.get();
             User user = optionalUser.get();
@@ -65,5 +67,20 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    public Optional<User> getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        return userRepository.findByUsername(username);
+    }
+
+    public boolean buyTicket(long eventId) {
+        return false; //todo
     }
 }

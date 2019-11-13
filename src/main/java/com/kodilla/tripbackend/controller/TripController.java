@@ -30,26 +30,12 @@ public class TripController {
 
     @RequestMapping(value = "/createdByUser", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<TripDto> getTripsCreatedByUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        return mapper.mapToDtoList(service.getTripsCreatedByUser(username));
+        return mapper.mapToDtoList(service.getTripsCreatedByUser());
     }
 
     @RequestMapping(value = "/userJoined", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<TripDto> getTripUserJoined() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        return mapper.mapToDtoList(service.getTripsUserJoined(username));
+        return mapper.mapToDtoList(service.getTripsUserJoined());
     }
 
     @RequestMapping(value = "/{googleId}/{radiusInKM}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -59,14 +45,7 @@ public class TripController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void createTrip(@RequestBody TripDto tripDto, HttpServletResponse response) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        if (!service.saveTrip(username, mapper.mapToTrip(tripDto))) {
+        if (!service.saveTrip(mapper.mapToTrip(tripDto))) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
@@ -74,7 +53,7 @@ public class TripController {
     @RequestMapping(value = "/{tripId}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void deleteTrip(@PathVariable Long tripId) {
         service.deleteTrip(tripId);
-    }
+    } //todo check
 
     @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateTrip(@RequestBody TripDto tripDto, HttpServletResponse response) {

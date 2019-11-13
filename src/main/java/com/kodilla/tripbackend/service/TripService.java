@@ -5,7 +5,6 @@ import com.kodilla.tripbackend.google_maps_json.geolocation.Location;
 import com.kodilla.tripbackend.mapper.LocalizationMapper;
 import com.kodilla.tripbackend.repositories.LocalizationRepository;
 import com.kodilla.tripbackend.repositories.TripRepository;
-import com.kodilla.tripbackend.repositories.UserRepository;
 import com.kodilla.tripbackend.repositories.WeatherForecastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,25 +19,25 @@ import java.util.stream.Collectors;
 public class TripService {
 
     @Autowired
-    TripRepository tripRepository;
+    private TripRepository tripRepository;
 
     @Autowired
-    LocalizationMapper localizationMapper;
+    private LocalizationMapper localizationMapper;
 
     @Autowired
-    UserRepository userRepository;
+    private LocalizationRepository localizationRepository;
 
     @Autowired
-    LocalizationRepository localizationRepository;
+    private WeatherService weatherService;
 
     @Autowired
-    WeatherService weatherService;
+    private WeatherForecastRepository weatherRepository;
 
     @Autowired
-    WeatherForecastRepository weatherRepository;
+    private GoogleMapService googleMapService;
 
     @Autowired
-    GoogleMapService googleMapService;
+    private UserService userService;
 
     public List<Trip> getAllTrips() {
         return tripRepository.findAll().stream()
@@ -46,16 +45,16 @@ public class TripService {
                 .collect(Collectors.toList());
     }
 
-    public List<Trip> getTripsCreatedByUser(String username) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+    public List<Trip> getTripsCreatedByUser() {
+        Optional<User> optionalUser = userService.getCurrentUser();
         if (!optionalUser.isPresent()){
             return new ArrayList<>();
         }
         return tripRepository.findByCreator(optionalUser.get());
     }
 
-    public List<Trip> getTripsUserJoined(String username) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+    public List<Trip> getTripsUserJoined() {
+        Optional<User> optionalUser = userService.getCurrentUser();
         if (!optionalUser.isPresent()){
             return new ArrayList<>();
         }
@@ -71,8 +70,8 @@ public class TripService {
         );
     }
 
-    public boolean saveTrip(String username, Trip trip) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+    public boolean saveTrip(Trip trip) {
+        Optional<User> optionalUser = userService.getCurrentUser();
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.getCreatedTrips().add(trip);
@@ -100,7 +99,7 @@ public class TripService {
 
     public boolean updateTrip(TripDto tripDto) {
         Optional<Trip> optionalTrip = tripRepository.findById(tripDto.getId());
-        if (optionalTrip.isPresent()) return false;
+        if (!optionalTrip.isPresent()) return false;
 
         Trip trip = optionalTrip.get();
         trip.setLocalizations(localizationMapper.mapToLocalisationList(tripDto.getLocalizations()));

@@ -67,7 +67,7 @@ public class Trip {
 
     @Setter
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    WeatherForecast weatherForecast;
+    private WeatherForecast weatherForecast;
 
     @Override
     public boolean equals(Object o) {

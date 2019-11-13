@@ -38,6 +38,14 @@ public class User {
     )
     private List<Trip> trips;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "JOIN_USER_EVENTS",
+            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "EVENT_ID", referencedColumnName = "EVENT_ID")}
+    )
+    private List<Event> events;
+
     @OneToMany(
             targetEntity = Trip.class,
             mappedBy = "creator",
@@ -45,6 +53,14 @@ public class User {
             fetch = FetchType.LAZY
     )
     private List<Trip> createdTrips;
+
+    @OneToMany(
+            targetEntity = Event.class,
+            mappedBy = "creator",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    private List<Event> createdEvents;
 
     public User(String username, String password, boolean enabled) {
         this.username = username;

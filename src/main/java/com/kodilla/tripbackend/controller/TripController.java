@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
-@RequestMapping("/trip")
+@CrossOrigin("*" )
+@RequestMapping("/trip" )
 public class TripController {
 
     @Autowired
@@ -33,7 +33,7 @@ public class TripController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername();
+            username = ((UserDetails) principal).getUsername();
         } else {
             username = principal.toString();
         }
@@ -45,11 +45,16 @@ public class TripController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername();
+            username = ((UserDetails) principal).getUsername();
         } else {
             username = principal.toString();
         }
         return mapper.mapToDtoList(service.getTripsUserJoined(username));
+    }
+
+    @RequestMapping(value = "/{googleId}/{radiusInKM}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<TripDto> getTripsByLocation(@PathVariable String googleId, @PathVariable int radiusInKM) {
+        return mapper.mapToDtoList(service.getTripsByLocation(googleId, radiusInKM));
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -57,7 +62,7 @@ public class TripController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername();
+            username = ((UserDetails) principal).getUsername();
         } else {
             username = principal.toString();
         }
@@ -77,11 +82,4 @@ public class TripController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
-
-
-//    @RequestMapping(name = "/trip/{longitude}/{latitude}/{radius}", method = RequestMethod.GET)
-//    public List<Trip> getTripsByLocation(@RequestParam double longitude, @RequestParam double latitude, @RequestParam int radius) {
-//        // TODO
-//        return new ArrayList<>();
-//    }
 }

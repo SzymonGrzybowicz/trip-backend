@@ -7,8 +7,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+@NamedNativeQuery(
+        name = "Trip.getTripByLocationRadius",
+        query = "select T.* from  trips T where " +
+                "T.trip_id in " +
+                "( select L.trip_trip_id from localizations L " +
+                "where   L.number_in_trip = 0 " +
+                "and ST_Distance_Sphere( point(L.longitude, L.latitude), point(:LONGITUDE, :LATITUDE) ) < :RADIUS * 1000);",
+        resultClass = Trip.class
+)
+
+@NamedNativeQuery(
+        name = "Trip.getTripUserJoined",
+        query = "select T.* from  trips T where T.trip_id in ( select JT.trip_id from join_user_trips JT where JT.user_id = :USER_ID);",
+        resultClass = Trip.class
+)
 @Entity
-@Table(name = "TRIPS")
+@Table(name = "TRIPS" )
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
@@ -22,7 +37,7 @@ public class Trip {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TRIP_ID")
+    @Column(name = "TRIP_ID" )
     private Long id;
 
     @Setter
@@ -35,18 +50,18 @@ public class Trip {
     private List<Localization> localizations;
 
     @Setter
-    @Column(name = "DATE")
+    @Column(name = "DATE" )
     private Date date;
 
     @Setter
-    @Column(name = "DISTANCE")
+    @Column(name = "DISTANCE" )
     private double distance;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "trips")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "trips" )
     private List<User> usersSignedUp;
 
     @ManyToOne
-    @JoinColumn(name = "CREATOR_USER_ID")
+    @JoinColumn(name = "CREATOR_USER_ID" )
     @Setter
     private User creator;
 

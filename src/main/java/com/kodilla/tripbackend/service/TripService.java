@@ -1,6 +1,7 @@
 package com.kodilla.tripbackend.service;
 
 import com.kodilla.tripbackend.domains.*;
+import com.kodilla.tripbackend.google_maps_json.geolocation.Location;
 import com.kodilla.tripbackend.mapper.LocalizationMapper;
 import com.kodilla.tripbackend.repositories.LocalizationRepository;
 import com.kodilla.tripbackend.repositories.TripRepository;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +37,9 @@ public class TripService {
     @Autowired
     WeatherForecastRepository weatherRepository;
 
+    @Autowired
+    GoogleMapService googleMapService;
+
     public List<Trip> getAllTrips() {
         return tripRepository.findAll().stream()
                 .map(t -> checkWeatherIsActualAndUpdate(t))
@@ -56,7 +59,16 @@ public class TripService {
         if (!optionalUser.isPresent()){
             return new ArrayList<>();
         }
-        return new ArrayList<>(); //TODO
+        return tripRepository.getTripUserJoined(optionalUser.get().getId());
+    }
+
+    public List<Trip> getTripsByLocation(String googleId, int radius) {
+        Location location = googleMapService.getCoordinates(googleId);
+        return tripRepository.getTripByLocationRadius(
+                location.getLongitude(),
+                location.getLatitude(),
+                radius
+        );
     }
 
     public boolean saveTrip(String username, Trip trip) {

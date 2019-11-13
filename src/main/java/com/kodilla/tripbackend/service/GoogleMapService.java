@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 public class GoogleMapService {
 
     @Autowired
-    AdminConfig adminConfig;
+    private AdminConfig adminConfig;
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     public List<LocalizationDTO> getSuggestions(String input) {
         URI uri = UriComponentsBuilder.fromHttpUrl("https://maps.googleapis.com/maps/api/place/autocomplete/json?")

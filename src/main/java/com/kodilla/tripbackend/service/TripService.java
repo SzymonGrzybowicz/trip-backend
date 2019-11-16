@@ -47,7 +47,7 @@ public class TripService {
 
     public List<Trip> getTripsCreatedByUser() {
         Optional<User> optionalUser = userService.getCurrentUser();
-        if (!optionalUser.isPresent()){
+        if (!optionalUser.isPresent()) {
             return new ArrayList<>();
         }
         return tripRepository.findByCreator(optionalUser.get());
@@ -55,7 +55,7 @@ public class TripService {
 
     public List<Trip> getTripsUserJoined() {
         Optional<User> optionalUser = userService.getCurrentUser();
-        if (!optionalUser.isPresent()){
+        if (!optionalUser.isPresent()) {
             return new ArrayList<>();
         }
         return tripRepository.getTripUserJoined(optionalUser.get().getId());
@@ -87,14 +87,20 @@ public class TripService {
 
     public boolean deleteTrip(Long id) {
         Optional<Trip> optionalTrip = tripRepository.findById(id);
-        if (optionalTrip.isPresent()) {
-            Trip trip = optionalTrip.get();
-            for (Localization localization : trip.getLocalizations()) {
-                localizationRepository.delete(localization);
-            }
-            tripRepository.delete(trip);
+        Optional<User> optionalUser = userService.getCurrentUser();
+        if (!optionalTrip.isPresent() || !optionalUser.isPresent()) {
+            return false;
         }
-        return false;
+        Trip trip = optionalTrip.get();
+        User user = optionalUser.get();
+        if (!trip.getCreator().equals(user)) {
+            return false;
+        }
+        for (Localization localization : trip.getLocalizations()) {
+            localizationRepository.delete(localization);
+        }
+        tripRepository.delete(trip);
+        return true;
     }
 
     public boolean updateTrip(TripDto tripDto) {

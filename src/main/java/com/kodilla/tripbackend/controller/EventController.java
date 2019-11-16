@@ -49,9 +49,11 @@ public class EventController {
     }
 
     @RequestMapping(value = "/{eventId}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteEvent(@PathVariable Long eventId) {
-        service.deleteEvent(eventId);
-    } // todo check
+    public void deleteEvent(@PathVariable Long eventId, HttpServletResponse response) {
+       if (!service.deleteEvent(eventId)){
+           response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+       }
+    }
 
     @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateEvent(@RequestBody EventDto eventDto, HttpServletResponse response) {

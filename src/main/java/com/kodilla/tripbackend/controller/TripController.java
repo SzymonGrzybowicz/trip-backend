@@ -5,23 +5,21 @@ import com.kodilla.tripbackend.mapper.TripMapper;
 import com.kodilla.tripbackend.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*" )
-@RequestMapping("/trip" )
+@CrossOrigin("*")
+@RequestMapping("/trip")
 public class TripController {
 
     @Autowired
-    TripService service;
+    private TripService service;
 
     @Autowired
-    TripMapper mapper;
+    private TripMapper mapper;
 
     @RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<TripDto> getAllTrips() {
@@ -51,9 +49,11 @@ public class TripController {
     }
 
     @RequestMapping(value = "/{tripId}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteTrip(@PathVariable Long tripId) {
-        service.deleteTrip(tripId);
-    } //todo check
+    public void deleteTrip(@PathVariable Long tripId, HttpServletResponse response) {
+        if (!service.deleteTrip(tripId)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+    }
 
     @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateTrip(@RequestBody TripDto tripDto, HttpServletResponse response) {

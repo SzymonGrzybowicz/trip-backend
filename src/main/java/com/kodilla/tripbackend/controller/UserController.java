@@ -37,9 +37,9 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/buyTicket/{eventId}", method = RequestMethod.PUT)
-    public void buyTicket(@PathVariable long eventId, HttpServletResponse response) {
-        if (!userService.buyTicket(eventId)) {
+    @RequestMapping(value = "/buyTicket/{eventId}/{smsCode}", method = RequestMethod.PUT)
+    public void buyTicket(@PathVariable long eventId, @PathVariable String smsCode, HttpServletResponse response) {
+        if (!userService.buyTicket(eventId, smsCode)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }

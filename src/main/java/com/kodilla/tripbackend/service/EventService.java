@@ -55,7 +55,7 @@ public class EventService {
 
     public List<Event> getEventsUserJoined() {
         Optional<User> optionalUser = userService.getCurrentUser();
-        if (!optionalUser.isPresent()){
+        if (!optionalUser.isPresent()) {
             return new ArrayList<>();
         }
         return eventRepository.getEventUserJoined(optionalUser.get().getId());
@@ -83,13 +83,19 @@ public class EventService {
     }
 
     public boolean deleteEvent(Long eventId) {
+        Optional<User> optionalUser = userService.getCurrentUser();
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
-        if (optionalEvent.isPresent()) {
-            Event event = optionalEvent.get();
-            localizationRepository.delete(event.getLocalization());
-            eventRepository.delete(event);
+        if (!optionalEvent.isPresent() || !optionalUser.isPresent()) {
+            return false;
         }
-        return false;
+        Event event = optionalEvent.get();
+        User user = optionalUser.get();
+        if (!event.getCreator().equals(user)) {
+            return false;
+        }
+        localizationRepository.delete(event.getLocalization());
+        eventRepository.delete(event);
+        return true;
     }
 
     public boolean updateEvent(EventDto eventDto) {

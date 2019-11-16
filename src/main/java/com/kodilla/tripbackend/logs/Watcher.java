@@ -1,11 +1,8 @@
 package com.kodilla.tripbackend.logs;
 
-import com.kodilla.tripbackend.logs.repository.EventsLogRepository;
-import com.kodilla.tripbackend.logs.repository.TripsLogsRepository;
-import com.kodilla.tripbackend.repositories.EventRepository;
-import com.kodilla.tripbackend.repositories.TripRepository;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import com.kodilla.tripbackend.logs.repository.GoogleLogsRepository;
+import com.kodilla.tripbackend.service.UserService;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,51 +13,20 @@ import java.util.Date;
 @Component
 public class Watcher {
 
-    @Autowired
-    EventsLogRepository eventsLogRepository;
 
     @Autowired
-    TripsLogsRepository tripsLogsRepository;
+    GoogleLogsRepository googleLogsRepository;
 
     @Autowired
-    TripRepository tripRepository;
+    UserService userService;
 
-    @Autowired
-    EventRepository eventRepository;
-
-    @Around("execution(* com.kodilla.tripbackend.controller.TripController.getAllTrips())")
-    public void measureGetAllTripsTime(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        try {
-            long begin = System.currentTimeMillis();
-            proceedingJoinPoint.proceed();
-            long end = System.currentTimeMillis();
-            tripsLogsRepository.save(
-                    new TripsLogsEntity(
-                            new Date(System.currentTimeMillis()),
-                            tripRepository.count(),
-                            begin - end)
-            );
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            throw throwable;
-        }
-    }
-
-    @Around("execution(* com.kodilla.tripbackend.controller.EventController.getAllEvents())")
-    public void measureGetAllEventsTime(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        try {
-            long begin = System.currentTimeMillis();
-            proceedingJoinPoint.proceed();
-            long end = System.currentTimeMillis();
-            eventsLogRepository.save(
-                    new EventsLogEntity(
-                            new Date(System.currentTimeMillis()),
-                            eventRepository.count(),
-                            end-begin
-                    ));
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            throw  throwable;
-        }
+    @After("execution(* com.kodilla.tripbackend.service.GoogleMapService.getSuggestions())")
+    public void measureGetAllTripsTime() throws Throwable {
+        googleLogsRepository.save(
+                new GoogleLogsEntity(
+                        new Date(System.currentTimeMillis()),
+                        userService.getCurrentUser().orElse(null)
+                )
+        );
     }
 }

@@ -74,7 +74,7 @@ public class UserService {
         return false;
     }
 
-     Optional<User> getCurrentUser() {
+     public Optional<User> getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {

@@ -2,6 +2,7 @@ package com.kodilla.tripbackend.domains;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class User {
             nullable = false, length = 45)
     private String username;
 
+    @Setter
     @Column(name = "PASSWORD",
             nullable = false, length = 60)
     private String password;
@@ -68,6 +70,8 @@ public class User {
         this.enabled = enabled;
         trips = new ArrayList<>();
         createdTrips = new ArrayList<>();
+        createdEvents = new ArrayList<>();
+        events = new ArrayList<>();
     }
 
     @Override

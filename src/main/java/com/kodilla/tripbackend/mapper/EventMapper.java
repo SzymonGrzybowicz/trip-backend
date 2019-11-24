@@ -2,6 +2,7 @@ package com.kodilla.tripbackend.mapper;
 
 import com.kodilla.tripbackend.domains.Event;
 import com.kodilla.tripbackend.domains.EventDto;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,8 @@ import java.util.stream.Collectors;
 public class EventMapper {
 
     @Autowired
-    LocalizationMapper localizationMapper;
+    @Setter
+    private LocalizationMapper localizationMapper;
 
     public Event mapToEvent(EventDto eventDTO) {
         return new Event(eventDTO.getDate(), localizationMapper.mapToLocalization(eventDTO.getLocalizationDto()), eventDTO.getPrice());
@@ -21,9 +23,10 @@ public class EventMapper {
     public List<EventDto> mapToDtoList(List<Event> events) {
         return events.stream()
                 .map(e -> new EventDto(
-                        localizationMapper.mapToDto(e.getLocalization()), e.getDate(), e.getPrice(),
-                        e.getUsersSignedUp(), e.getCreator(), e.getWeatherForecast())
-                ).collect(Collectors.toList());
+                        e.getId(), localizationMapper.mapToDto(e.getLocalization()), e.getDate(),
+                        e.getWeatherForecast() == null ? null : (int) Math.round(e.getWeatherForecast().getTemperature()),
+                        e.getPrice()))
+                .collect(Collectors.toList());
     }
 
 }

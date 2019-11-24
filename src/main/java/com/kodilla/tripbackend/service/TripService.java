@@ -6,6 +6,7 @@ import com.kodilla.tripbackend.mapper.LocalizationMapper;
 import com.kodilla.tripbackend.repositories.LocalizationRepository;
 import com.kodilla.tripbackend.repositories.TripRepository;
 import com.kodilla.tripbackend.repositories.WeatherForecastRepository;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,24 +20,31 @@ import java.util.stream.Collectors;
 public class TripService {
 
     @Autowired
+    @Setter
     private TripRepository tripRepository;
 
     @Autowired
+    @Setter
     private LocalizationMapper localizationMapper;
 
     @Autowired
+    @Setter
     private LocalizationRepository localizationRepository;
 
     @Autowired
+    @Setter
     private WeatherService weatherService;
 
     @Autowired
+    @Setter
     private WeatherForecastRepository weatherRepository;
 
     @Autowired
+    @Setter
     private GoogleMapService googleMapService;
 
     @Autowired
+    @Setter
     private UserService userService;
 
     public List<Trip> getAllTrips() {
@@ -108,7 +116,21 @@ public class TripService {
         if (!optionalTrip.isPresent()) return false;
 
         Trip trip = optionalTrip.get();
+        trip.getLocalizations().forEach(
+                l -> {
+                    localizationRepository.delete(l);
+                }
+        );
         trip.setLocalizations(localizationMapper.mapToLocalisationList(tripDto.getLocalizations()));
+        trip.getLocalizations().forEach(
+                l-> {
+                    l.setTrip(trip);
+                }
+        );
+        if (trip.getWeatherForecast() != null) {
+            weatherRepository.delete(trip.getWeatherForecast());
+        }
+        trip.setWeatherForecast(null);
         trip.setDate(tripDto.getDate());
         trip.setDistance(tripDto.getDistance());
         tripRepository.save(trip);

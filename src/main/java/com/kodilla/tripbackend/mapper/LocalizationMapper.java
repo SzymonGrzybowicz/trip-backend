@@ -4,6 +4,7 @@ import com.kodilla.tripbackend.domains.Localization;
 import com.kodilla.tripbackend.domains.LocalizationDto;
 import com.kodilla.tripbackend.google_maps_json.geolocation.Location;
 import com.kodilla.tripbackend.service.GoogleMapService;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class LocalizationMapper {
 
     @Autowired
+    @Setter
     private GoogleMapService googleMapService;
 
     public List<LocalizationDto> mapToDtoList(List<Localization> localizations) {

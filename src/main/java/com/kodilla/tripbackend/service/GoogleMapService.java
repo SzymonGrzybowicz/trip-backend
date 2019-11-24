@@ -6,6 +6,7 @@ import com.kodilla.tripbackend.google_maps_json.distanceMatrix.DistanceResponse;
 import com.kodilla.tripbackend.google_maps_json.geolocation.Location;
 import com.kodilla.tripbackend.google_maps_json.geolocation.Response;
 import com.kodilla.tripbackend.google_maps_json.places.Prediction;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -19,9 +20,11 @@ import java.util.stream.Collectors;
 public class GoogleMapService {
 
     @Autowired
+    @Setter
     private AdminConfig adminConfig;
 
     @Autowired
+    @Setter
     private RestTemplate restTemplate;
 
     public List<LocalizationDto> getSuggestions(String input) {

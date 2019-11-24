@@ -30,6 +30,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.security:spring-security-test')
+    compile('com.google.code.gson:gson:2.8.5')
 }
 
 test {

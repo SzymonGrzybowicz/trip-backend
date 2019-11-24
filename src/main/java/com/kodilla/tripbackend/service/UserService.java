@@ -7,27 +7,35 @@ import com.kodilla.tripbackend.domains.UserDto;
 import com.kodilla.tripbackend.repositories.EventRepository;
 import com.kodilla.tripbackend.repositories.TripRepository;
 import com.kodilla.tripbackend.repositories.UserRepository;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Component
 public class UserService {
 
     @Autowired
+    @Setter
     private UserRepository userRepository;
 
     @Autowired
+    @Setter
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    @Setter
     private TripRepository tripRepository;
 
     @Autowired
+    @Setter
     private EventRepository eventRepository;
 
     public boolean registerUser(UserDto userDto) {
@@ -41,7 +49,22 @@ public class UserService {
         return true;
     }
 
-    public boolean joinUserToTrip(long tripId) {
+    public boolean deleteUser(HttpServletRequest request) {
+        Optional<User> optionalUser = getCurrentUser();
+        if (!optionalUser.isPresent()) {
+            return false;
+        }
+        User user = optionalUser.get();
+        userRepository.delete(user);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null){
+            new SecurityContextLogoutHandler().logout(request, null, auth);
+        }
+        return true;
+    }
+
+    public boolean
+    joinUserToTrip(long tripId) {
         Optional<Trip> optionalTrip = tripRepository.findById(tripId);
         Optional<User> optionalUser = getCurrentUser();
         if (optionalTrip.isPresent() && optionalUser.isPresent()){
@@ -97,8 +120,25 @@ public class UserService {
         }
         Event event = optionalEvent.get();
         User user = optionalUser.get();
+        if (event.getCreator().equals(user)) {
+            return false;
+        }
         event.getUsersSignedUp().add(user);
         user.getEvents().add(event);
+        userRepository.save(user);
+        return true;
+    }
+
+    public boolean changePassword(String newPassword, String oldPassword) {
+        Optional<User> optionalUser = getCurrentUser();
+        if (!optionalUser.isPresent()) {
+            return false;
+        }
+        User user = optionalUser.get();
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            return false;
+        }
+        user.setPassword(newPassword);
         userRepository.save(user);
         return true;
     }

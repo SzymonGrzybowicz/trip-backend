@@ -4,6 +4,7 @@ import com.kodilla.tripbackend.AdminConfig;
 import com.kodilla.tripbackend.dark_sky_weather_json.Forecast;
 import com.kodilla.tripbackend.dark_sky_weather_json.Response;
 import com.kodilla.tripbackend.domains.WeatherForecast;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -19,9 +20,11 @@ import java.util.List;
 public class WeatherService {
 
     @Autowired
+    @Setter
     private AdminConfig adminConfig;
 
     @Autowired
+    @Setter
     private RestTemplate restTemplate;
 
     public WeatherForecast getForecastForDate(Date date, double latitude, double longitude) {

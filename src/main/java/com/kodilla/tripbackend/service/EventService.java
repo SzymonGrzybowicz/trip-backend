@@ -6,6 +6,7 @@ import com.kodilla.tripbackend.mapper.LocalizationMapper;
 import com.kodilla.tripbackend.repositories.EventRepository;
 import com.kodilla.tripbackend.repositories.LocalizationRepository;
 import com.kodilla.tripbackend.repositories.WeatherForecastRepository;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,25 +20,32 @@ import java.util.stream.Collectors;
 public class EventService {
 
     @Autowired
-    EventRepository eventRepository;
+    @Setter
+    private EventRepository eventRepository;
 
     @Autowired
-    UserService userService;
+    @Setter
+    private UserService userService;
 
     @Autowired
-    LocalizationRepository localizationRepository;
+    @Setter
+    private LocalizationRepository localizationRepository;
 
     @Autowired
-    LocalizationMapper localizationMapper;
+    @Setter
+    private LocalizationMapper localizationMapper;
 
     @Autowired
-    WeatherForecastRepository weatherRepository;
+    @Setter
+    private WeatherForecastRepository weatherRepository;
 
     @Autowired
-    WeatherService weatherService;
+    @Setter
+    private WeatherService weatherService;
 
     @Autowired
-    GoogleMapService googleMapService;
+    @Setter
+    private GoogleMapService googleMapService;
 
     public List<Event> getAllEvents() {
         return eventRepository.findAll().stream()
